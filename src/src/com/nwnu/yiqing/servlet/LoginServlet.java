@@ -3,7 +3,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 /**
- * µÇÂ¼
+ * ç™»å½•
  */
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,21 +46,24 @@ public class LoginServlet extends HttpServlet {
 		String vcode = req.getParameter("vcode");
 		String msg = "success";
 		if(StringUtil.isEmpty(name)){
-			msg = "ÓÃ»§Ãû²»ÄÜÎª¿Õ!";
+			msg = "ç”¨æˆ·åä¸èƒ½ä¸ºç©º!";
 		}
 		if(StringUtil.isEmpty(password)){
-			msg = "ÃÜÂë²»ÄÜÎª¿Õ!";
+			msg = "å¯†ç ä¸èƒ½ä¸ºç©º!";
 		}
 		if(StringUtil.isEmpty(vcode)){
-			msg = "ÑéÖ¤Âë²»ÄÜÎª¿Õ!";
+			msg = "éªŒè¯ç ä¸èƒ½ä¸ºç©º!";
 		}
 		if("success".equals(msg)){
 			Object loginCpacha = req.getSession().getAttribute("loginCpacha");
-			if(loginCpacha == null){
-				msg = "sessionÒÑ¹ıÆÚ£¬ÇëË¢ĞÂÒ³ÃæºóÖØÊÔ£¡";
-			}else{
-				if(!vcode.toUpperCase().equals(loginCpacha.toString().toUpperCase())){
-					msg = "ÑéÖ¤Âë´íÎó";
+			if(loginCpacha == null)
+			{
+				msg = "sessionå·²è¿‡æœŸï¼Œè¯·åˆ·æ–°é¡µé¢åé‡è¯•ï¼";
+			}
+			else{
+				if(!vcode.toUpperCase().equals(loginCpacha.toString().toUpperCase()))
+				{
+					msg = "éªŒè¯ç é”™è¯¯";
 				}
 			}
 			
@@ -70,64 +73,72 @@ public class LoginServlet extends HttpServlet {
 			try {
 				int type = Integer.parseInt(typeString);
 				if(type == 1){
-					//Ñ§Ğ£·ÀÒß°ìÓÃ»§
+					//å­¦æ ¡é˜²ç–«åŠç”¨æˆ·
 					SchoolOfficeDao adminDao = new SchoolOfficeDao();
 					SchoolOffice admin = adminDao.getAdmin(name);
 					adminDao.closeConnection();
 					if(admin == null){
-						msg = "²»´æÔÚ¸ÃÓÃ»§£¡";
+						msg = "ä¸å­˜åœ¨è¯¥ç”¨æˆ·ï¼";
 					}
 					if(admin != null){
 						if(!password.equals(admin.getPassword())){
-							msg = "ÃÜÂë´íÎó£¡";
+							msg = "å¯†ç é”™è¯¯ï¼";
 						}else{
 								req.getSession().setAttribute("user", admin);
 								req.getSession().setAttribute("userType", type);
 						}
 					}
-				}else if(type == 2){
-					//Ñ§ÉúµÇÂ¼
+				}else if(type == 2)
+				{
+					//å­¦ç”Ÿç™»å½•
 					StudentDao studentDao = new StudentDao();
 					Page<Student> page = new Page<Student>(1, 10);
 					page.getSearchProperties().add(new SearchProperty("name", name, Operator.EQ));
 					Page<Student> studentPage = studentDao.findList(page);
 					studentDao.closeConnection();
 					if(studentPage.getConten().size() == 0){
-						msg = "²»´æÔÚ¸ÃÓÃ»§£¡";
+						msg = "ä¸å­˜åœ¨è¯¥ç”¨æˆ·ï¼";
 					}else{
 						Student student = studentPage.getConten().get(0);
 						if(!password.equals(student.getPassword())){
-							msg = "ÃÜÂë´íÎó£¡";
+							msg = "å¯†ç é”™è¯¯ï¼";
 						}else{
 							req.getSession().setAttribute("user", student);
 							req.getSession().setAttribute("userType", type);
 						}
 					}
 					
-				}else if(type == 3){
-					//Ñ§Ôº¸ºÔğÈËµÇÂ¼
+				}
+				else if(type == 3)
+				{
+					//å­¦é™¢è´Ÿè´£äººç™»å½•
 					CollegeadminDao collegeDao = new CollegeadminDao();
 					Page<Collegeadmin> page = new Page<Collegeadmin>(1, 10);
 					page.getSearchProperties().add(new SearchProperty("name", name, Operator.EQ));
 					page = collegeDao.findList(page);
 					collegeDao.closeConnection();
-					if(page.getConten().size() == 0){
-						msg = "²»´æÔÚ¸ÃÓÃ»§£¡";
-					}else{
+					if(page.getConten().size() == 0)
+					{
+						msg = "ä¸å­˜åœ¨è¯¥ç”¨æˆ·ï¼";
+					}
+					else
+					{
 						Collegeadmin college = page.getConten().get(0);
-						if(!password.equals(college.getPassword())){
-							msg = "ÃÜÂë´íÎó£¡";
-						}else{
+						if(!password.equals(college.getPassword()))
+						{
+							msg = "å¯†ç é”™è¯¯ï¼";
+						}
+						else{
 							req.getSession().setAttribute("user", college);
 							req.getSession().setAttribute("userType", type);
 						}
 					}
 				}else{
-					msg = "ÓÃ»§ÀàĞÍ´íÎó";
+					msg = "ç”¨æˆ·ç±»å‹é”™è¯¯";
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
-				msg = "ÓÃ»§ÀàĞÍ´íÎó£¡";
+				msg = "ç”¨æˆ·ç±»å‹é”™è¯¯ï¼";
 			}
 		}
 		resp.setCharacterEncoding("utf-8");
